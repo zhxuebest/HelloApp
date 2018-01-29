@@ -12,7 +12,7 @@
     body {
         height: 100%;
     }
-
+    
     body {
         background-color: #eee;
     }
@@ -131,20 +131,115 @@
         <div class="button">清空</div>
     </header>
     <section id="list">
-        <div class="option">
+        <!--         <div class="option">
             <div class="icon"></div>
             <div class="info">
                 <div class="top">门头沟</div>
                 <div class="bottom">正在获取...</div>
             </div>
-        </div>
+        </div> -->
     </section>
 </body>
+<script type="text/template" id="template">
+    {{~it.results:value}}
+    <div class="option" tapmode onclick="fnSelectAddress('{{=value.address}}')">
+        <div class="icon"></div>
+        <div class="info">
+            <div class="top">{{=value.name}}</div>
+            <div class="bottom">{{=value.address}}</div>
+        </div>
+    </div>
+    {{~}}
+</script>
 <script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
 <script type="text/javascript">
 apiready = function() {
-
+    fnInitUIInput();
 };
+
+function fnInitUIInput() {
+    var searchText = $api.byId('searchText');
+    var rect = $api.offset(searchText);
+    var UIInput = api.require('UIInput');
+    UIInput.open({
+        rect: {
+            x: rect.l,
+            y: rect.t,
+            w: rect.w,
+            h: rect.h
+        },
+        styles: {
+            bgColor: '#eee',
+            size: 14,
+            color: '#000',
+            placeholder: {
+                color: '#ccc'
+            }
+        },
+        autoFocus: false,
+        maxRows: 1,
+        placeholder: '请输入地址',
+        keyboardType: 'default',
+        fixedOn: api.frameName
+    }, function(ret, err) {
+        if (ret) {
+            var uiInputId = ret.id;
+            if (ret && ret.eventType == "show") {
+                setTimeout(function() {
+                    UIInput.popupKeyboard({id: uiInputId});
+                }, 300)
+            } else if (ret.eventType == "change") {
+                UIInput.value({
+                    id: uiInputId
+                }, function(ret, err) {
+                    if (ret) {
+                        if (ret.status) {
+                            //console.log(ret.msg);
+                            fnSearchInCity(ret.msg);
+                        }
+                    } else {
+                        alert(JSON.stringify(err));
+                    }
+                });
+            }
+        } else {
+            alert(JSON.stringify(err));
+        }
+    });
+}
+
+function fnSearchInCity(msg_) {
+    var currentCity = $api.getStorage('currentCity');
+    var bMap = api.require('bMap');
+    bMap.searchInCity({
+        city: currentCity.name,
+        keyword: msg_,
+        pageIndex: 0,
+        pageCapacity: 20
+    }, function(ret) {
+        if (ret.status) {
+            fnUpdateSearchList(ret);
+        }
+    });
+}
+
+function fnUpdateSearchList(data_) {
+    var template = $api.byId('template');
+    var list = $api.byId('list');
+    var tempFn = doT.template(template.innerHTML);
+    var html = tempFn(data_);
+    $api.html(list, html);
+}
+
+function fnSelectAddress(address_) {
+    api.execScript({
+        name: 'setaddress',
+        frameName: 'setaddress_frame',
+        script: 'setAddressDetail(\'' + address_ + '\');'
+    });
+    api.closeWin();
+}
 </script>
 
 </html>

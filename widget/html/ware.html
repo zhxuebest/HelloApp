@@ -5,14 +5,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>商品</title>
+    <title>商品详情Window</title>
     <link rel="stylesheet" type="text/css" href="../css/api.css" />
     <style>
     html,
     body {
         height: 100%;
     }
-
+    
     body {
         display: -webkit-box;
         display: -webkit-flex;
@@ -33,12 +33,12 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 50px;
+        width: 80px;
         height: 50px;
         background: url(../image/back.png);
         background-position: 12px 16px;
         background-size: 11px 18px;
-        background-repeat: no-repeat;    
+        background-repeat: no-repeat;
     }
     
     header h1 {
@@ -66,6 +66,7 @@
         -webkit-box-flex: 1;
         -webkit-flex: 1;
         flex: 1;
+        overflow: auto;
     }
     
     footer {
@@ -130,16 +131,16 @@
 
 <body>
     <header id="header">
-        <div class="back"></div>
+        <div class="back" tapmode onclick="api.closeWin();"></div>
         <h1>商品详情</h1>
-        <div class="right">分享</div>
+        <div class="right" tapmode onclick="fnOpenShareFrame();">分享</div>
     </header>
     <section></section>
     <footer id="footer">
         <div class="control">
-            <img id="minus" src="../image/minus.png" class="minus">
+            <img id="minus" src="../image/minus.png" class="minus" onclick="fnMinus();">
             <div id="count" class="count">0</div>
-            <img id="add" src="../image/add.png" class="add">
+            <img id="add" src="../image/add.png" class="add" onclick="fnAdd();">
         </div>
         <img src="../image/buynow.png" class="buy-button">
     </footer>
@@ -147,7 +148,106 @@
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript">
 apiready = function() {
+    // 处理沉浸式效果，计算header和footer的高度
+    var header = $api.byId('header');
+    var footer = $api.byId('footer');
+    $api.fixStatusBar(header);
+    var headerH = $api.offset(header).h;
+    var footerH = $api.offset(footer).h;
+
+    // 更新商品数量
+    count = $api.byId('count');
+    count.innerHTML = api.pageParam.wareCount;
+
+    // 打开商品详情Frame
+    api.openFrame({
+        name: 'ware_frame',
+        url: './ware_frame.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: api.winHeight - headerH - footerH
+        },
+        pageParam: {
+            wareId: api.pageParam.wareId
+        },
+        bounces: true
+    });
+
+    // 打开mini购物车Frame
+    api.openFrame({
+        name: 'minicart_frame',
+        url: './minicart_frame.html',
+        rect: {
+            x: 0,
+            y: api.winHeight - 55 - footerH,
+            w: 150,
+            h: 34
+        },
+        bounces: false // 关闭弹动
+    });
+
+    // 将mini购物车Frame放置在首页Window所有Frame的最上层
+    api.bringFrameToFront({
+        from: 'minicart_frame'
+    });
 };
+
+var count;
+
+// 添加到购物车按钮的监听函数
+function fnAdd() {
+
+    // 更新商品数量及显示状态
+    var wareCount = parseInt(count.innerHTML);
+    wareCount += 1;
+    count.innerHTML = wareCount;
+
+    // 发送购物车更新自定义事件，传递商品Id和商品数量
+    api.sendEvent({
+        name: 'updateShoppingCart',
+        extra: {
+            wareId: api.pageParam.wareId,
+            wareCount: wareCount
+        }
+    });
+}
+
+// 从购物车删除按钮的监听函数
+function fnMinus() {
+
+    // 更新商品数量及显示状态
+    var wareCount = parseInt(count.innerHTML);
+    if (wareCount > 0) {
+        wareCount -= 1;
+    }
+    count.innerHTML = wareCount;
+
+    // 发送购物车更新自定义事件，传递商品Id和商品数量
+    api.sendEvent({
+        name: 'updateShoppingCart',
+        extra: {
+            wareId: api.pageParam.wareId,
+            wareCount: wareCount
+        }
+    });
+}
+
+// 打开分享Frame
+function fnOpenShareFrame() {
+    api.openFrame({
+        name: 'share_frame',
+        url: './share_frame.html',
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: 'auto'
+        },
+        bgColor: 'rgba(0,0,0,0.5)' // 设置Frame的透明度
+    });
+}
 </script>
 
 </html>

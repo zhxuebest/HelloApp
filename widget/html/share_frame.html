@@ -24,6 +24,7 @@
         -webkit-box-flex: 1;
         -webkit-flex: 1;
         flex: 1;
+        overflow: auto;
     }
     
     footer {
@@ -61,7 +62,7 @@
 </head>
 
 <body>
-    <section></section>
+    <section tapmode onclick="api.closeFrame();"></section>
     <footer>
         <div id="footer_span1" class="col">
             <img src="../image/share_timeline.png" />
@@ -76,6 +77,7 @@
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript">
 apiready = function() {
+
 };
 
 </script>

@@ -135,12 +135,10 @@
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript">
 apiready = function() {
-    fnInit();
+    init();
 };
 
-var list;
-
-function fnInit() {
+function init() {
     list = $api.byId('list');
     list.style.WebkitTransform = 'scale(' + api.winWidth / 722 + ')';
 };

@@ -23,7 +23,7 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 50px;
+        width: 80px;
         height: 50px;
         z-index: 2;
     }
@@ -59,7 +59,22 @@
 </body>
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript">
-apiready = function() {};
+apiready = function() {
+    var header = $api.byId('header');
+    $api.fixStatusBar(header);
+    var headerH = $api.offset(header).h;
+    api.openFrame({
+        name: 'customerservice_frame',
+        url: './customerservice_frame.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: 'auto'
+        },
+        bounces: false
+    });
+};
 </script>
 
 </html>

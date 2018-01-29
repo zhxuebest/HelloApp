@@ -18,7 +18,7 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 50px;
+        width: 80px;
         height: 50px;
         background: url(../image/back.png);
         background-position: 12px 16px;
@@ -51,16 +51,46 @@
 
 <body>
     <header id="header">
-        <div class="back"></div>
+        <div class="back" tapmode onclick="api.closeWin();"></div>
         <h1>会员登录</h1>
-        <div class="right">注册</div>
+        <div class="right" tapmode onclick="fnOpenRegisterWin();">注册</div>
     </header>
 </body>
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript">
 apiready = function() {
+    var header = $api.byId('header');
+    $api.fixStatusBar(header);
+    var headerH = $api.offset(header).h;
 
+    // 打开注册Frame
+    api.openFrame({
+        name: 'login_frame',
+        url: './login_frame.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: 'auto'
+        },
+        pageParam: {
+            name: 'test'
+        },
+        bounces: false,
+        softInputBarEnabled: false //不显示键盘上方的工具条
+    });
 };
+
+// 打开注册Window
+function fnOpenRegisterWin () {
+    api.openWin({
+        name: 'register',
+        url: './register.html',
+        pageParam: {
+            name: 'test'
+        }
+    });
+}
 </script>
 
 </html>

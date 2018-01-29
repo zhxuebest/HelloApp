@@ -23,7 +23,7 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 50px;
+        width: 80px;
         height: 50px;
         z-index: 2;
     }
@@ -95,7 +95,7 @@
 
 <body>
     <header id="header">
-        <div class="back">
+        <div class="back" tapmode onclick="api.closeWin();">
             <img src="../image/back.png">
         </div>
         <div class="title">
@@ -112,6 +112,25 @@
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript">
 apiready = function() {
+    var header = $api.byId('header');
+    $api.fixStatusBar(header);
+    var search = $api.byId('search');
+
+    var headerH = $api.offset(header).h;
+    var searchH = $api.offset(search).h;
+
+    // 打开优惠券Frame
+    api.openFrame({
+        name: 'coupon_frame',
+        url: './coupon_frame.html',
+        rect: {
+            x: 0,
+            y: headerH + searchH,
+            w: 'auto',
+            h: 'auto'
+        },
+        bounces: true
+    });
 };
 </script>
 

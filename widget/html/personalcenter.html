@@ -29,7 +29,7 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 50px;
+        width: 80px;
         height: 50px;
         background: url(../image/back.png);
         background-position: 12px 16px;
@@ -41,6 +41,7 @@
         -webkit-box-flex: 1;
         -webkit-flex: 1;
         flex: 1;
+        overflow: auto
     }
     
     footer {
@@ -99,27 +100,68 @@
 
 <body>
     <header id="header">
-        <div class="back"></div>
+        <div class="back" tapmode onclick="api.closeWin();"></div>
     </header>
     <section></section>
     <footer id="footer">
         <div class="item">
-            <div class="button setting">设置</div>
+            <div class="button setting" tapmode onclick="fnOpenSettingWin();">设置</div>
         </div>
         <div class="item">
-            <div class="button message">消息</div>
+            <div class="button message" tapmode onclick="fnOpenMessageWin();">消息</div>
         </div>
         <div class="item"></div>
         <div class="item item-service">
-            <div class="button service">客服</div>
+            <div class="button service" tapmode onclick="fnOpenCustomerServiceWin();">客服</div>
         </div>
     </footer>
 </body>
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript">
 apiready = function() {
+    var header = $api.byId('header');
+    var footer = $api.byId('footer');
+    $api.fixStatusBar(header);
 
+    var headerH = $api.offset(header).h;
+    var footerH = $api.offset(footer).h;
+
+    api.openFrame({
+        name: 'personalcenter_frame',
+        url: './personalcenter_frame.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: api.winHeight - headerH - footerH
+        },
+        bounces: false
+    });
 };
+
+// 打开设置Window
+function fnOpenSettingWin () {
+    api.openWin({
+        name: 'setting',
+        url: './setting.html'
+    });
+}
+
+// 打开消息Window
+function fnOpenMessageWin () {
+    api.openWin({
+        name: 'message',
+        url: './message.html'
+    });
+}
+
+// 打开客服Window
+function fnOpenCustomerServiceWin () {
+    api.openWin({
+        name: 'customerservice',
+        url: './customerservice.html'
+    });
+}
 </script>
 
 </html>

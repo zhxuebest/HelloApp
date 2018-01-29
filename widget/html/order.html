@@ -30,7 +30,7 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 50px;
+        width: 80px;
         height: 50px;
         z-index: 2;
     }
@@ -103,7 +103,7 @@
 
 <body>
     <header id="header">
-        <div class="back">
+        <div class="back" tapmode onclick="api.closeWin();">
             <img src="../image/back.png">
         </div>
         <div class="title">
@@ -113,7 +113,7 @@
     <section></section>
     <footer id="footer">
         <div class="panel">总金额:￥24.9</div>
-        <div class="buy">
+        <div class="buy" tapmode onclick="fnBuy();">
             <img class="buy-button" src="../image/confirm.png">
         </div>
     </footer>
@@ -121,7 +121,34 @@
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript">
 apiready = function() {
+    var header = $api.byId('header');
+    var footer = $api.byId('footer');
+    $api.fixStatusBar(header);
+
+    var headerH = $api.offset(header).h;
+    var footerH = $api.offset(footer).h;
+
+    // 打开购物车Frame
+    api.openFrame({
+        name: 'order_frame',
+        url: './order_frame.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: api.winHeight - headerH - footerH
+        },
+        bounces: false
+    });
 };
+
+function fnBuy () {
+    api.toast({
+        msg: '演示版本，不能支付',
+        duration: 2000,
+        location: 'bottom'
+    });
+}
 </script>
 
 </html>
