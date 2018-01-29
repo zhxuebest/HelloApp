@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+	<style>
+		header {
+			background-color: #3399FF;
+			position: relative;
+			height: 50px;
+			width: 100%;
+		}
+
+		header h1{
+			position: relative;
+			height: 50px;
+			line-height: 50px;
+			font-size: 20px; color: #FFF; text-align: center; 
+		}
+		header .right{
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			width: 100px;
+			line-height: 50px;
+			height: 50px;
+			font-size: 16px; color: #FFF; text-align: center;
+		}
+
+	nav {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-orient: horizontal;
+        -webkit-flex-flow: row;
+        flex-flow: row;
+        position: relative;
+        width: 100%;
+        height: 40px;
+        background-color: #3399FF;
+    }
+    
+    nav .menu {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1;
+        flex: 1;
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        font-size: 13px;
+        color: #f973b8;
+        text-align: center;
+    }
+    
+    nav .menu.selected {
+        font-size: 14px;
+        color: #fff;
+        font-weight: bolder;
+    }
+	</style>	
+</head>
+<body>
+    <header id="header">
+    	<h1>优选布料</h1>
+    	<div class="right" tapmode onclick="fnOpenPersonalCenterWin();">个人中心</div>
+    </header>
+    <nav id="nav">
+        <div class="menu selected" tapmode="selected" onclick="fnSetNavMenuIndex(0);">水果</div>
+        <div class="menu" tapmode="selected" onclick="fnSetNavMenuIndex(1);">食材</div>
+        <div class="menu" tapmode="selected" onclick="fnSetNavMenuIndex(2);">零食</div>
+        <div class="menu" tapmode="selected" onclick="fnSetNavMenuIndex(3);">牛奶</div>
+        <div class="menu" tapmode="selected" onclick="fnSetNavMenuIndex(4);">蔬菜</div>
+    </nav>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+apiready = function(){
+	    
+    var header = $api.byId('header');
+    var nav = $api.byId('nav');
+    // 实现沉浸式状态栏效果
+    $api.fixStatusBar(header);
+    // 计算header和nav元素的高度
+    headerH = $api.offset(header).h;
+    navH = $api.offset(nav).h;
+	// 获取所有的分类菜单
+    menus = $api.domAll(nav, '.menu');
+    // 打开FrameGroup
+    api.openFrameGroup({
+        name: 'mainFrameGroup',
+        scrollEnabled: true, // 支持手势滑动切换
+        rect: {
+            x: 0,
+            y: headerH + navH,
+            w: 'auto', // 自动填充所在Window的宽度
+            h: 'auto' // 自动填充所在Window的高度
+        },
+        index: 0, // 默认显示第一个Frame
+        frames: frames,
+        preload: frames.length // 预加载所有Frame
+    }, function(ret, err) {
+        // Frame切换完成的响应函数，更新分类菜单的选中状态
+        fnSetNavMenuSelected(ret.index);
+    });
+
+}
+
+function fnOpenPersonalCenterWin(){
+	api.openWin({
+	    name: 'personalWin',
+	    url: './personalWin.html',
+	    pageParam: {
+	        name: 'value'
+	    }
+	});
+}
+
+function fnSetNavMenuIndex(index_) {
+    // 首先更新菜单选中状态
+    fnSetNavMenuSelected(index_);
+
+    // 切换FrameGroup中的当前Frame
+    api.setFrameGroupIndex({
+        name: 'mainFrameGroup',
+        index: index_,
+        scroll: true
+    });
+}
+
+// 更新分类菜单的选中状态
+function fnSetNavMenuSelected(index_) {
+    for (var i = 0; i < menus.length; i++) {
+        if (index_ == i) {
+            $api.addCls(menus[i], 'selected');
+        } else {
+            $api.removeCls(menus[i], 'selected');
+        }
+    }
+}
+
+	    
+</script>
+</html>
